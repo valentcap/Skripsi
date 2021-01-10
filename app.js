@@ -7,6 +7,8 @@ var mv = require('mv');
 const hostname = '127.0.0.1';
 const port = 3000;
 
+const baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
+
 fs.readFile('index.html', (err, html) => {
 	if(err){
 		throw err;
@@ -17,25 +19,30 @@ fs.readFile('index.html', (err, html) => {
 		res.setHeader('Content-Type', 'text/html');
 		if (req.url == '/fileupload') {
 		    var form = formidable({ multiples: true });
+		    let allFiles = [];
 		    form.parse(req, function (err, fields, files) {
-		    	res.writeHead(200, { 'content-type': 'application/json' });
     			// res.end(JSON.stringify({ fields, files }, null, 2));
-
+    			console.log(files)
 
     			files.filetoupload.forEach(file => {
     				// JSON.stringify(file, null, 1);
     				// console.log(JSON.stringify(file, null, 1));
-    				var oldpath = files.filetoupload.path;
-				    var newpath = 'D:/Kuliah/Program Skripsi/Uploaded/' + files.filetoupload.name;
+    				var oldpath = file.path;
+				    var newpath = baseUploadPath + file.name;
+					let dir = "./Uploaded/" + file.name.split("/")[file.name.split("/").length-2];
+					console.log(dir)
+					if(!fs.existsSync(dir)){
+						fs.mkdirSync(dir);
+						console.log("ga ada");
+					}
 				    mv(oldpath, newpath, function (err) {
 				    	if (err) {
 				    		throw err;
 				    	}
-				        res.write('File uploaded and moved!');
-				        res.write('<input type="button" value="Go back!" onclick="history.back()">');
-				        res.end();
 				    });
     			});
+    			res.write('File uploaded and moved!');
+				res.write('<input type="button" value="Go back!" onclick="history.back()">');
     			res.end();
 				
 		   		// var oldpath = files.filetoupload.path;
@@ -51,13 +58,6 @@ fs.readFile('index.html', (err, html) => {
 		    });
 		}else{
 			res.write(html);
-			// const testFolder = './tests/';
-			// //Baca file dalam folder
-			// fs.readdir(testFolder, (err, files) => {
-				// files.forEach(file => {
-				// 	console.log(file);
-				// });
-			// });
 			res.end();
 		}
 		
