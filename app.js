@@ -21,19 +21,16 @@ fs.readFile('index.html', (err, html) => {
 		    var form = formidable({ multiples: true });
 		    let allFiles = [];
 		    form.parse(req, function (err, fields, files) {
-    			// res.end(JSON.stringify({ fields, files }, null, 2));
     			console.log(files)
 
     			files.filetoupload.forEach(file => {
-    				// JSON.stringify(file, null, 1);
-    				// console.log(JSON.stringify(file, null, 1));
     				var oldpath = file.path;
 				    var newpath = baseUploadPath + file.name;
-					let dir = "./Uploaded/" + file.name.split("/")[file.name.split("/").length-2];
-					console.log(dir)
+					//let dir = "./Uploaded/" + file.name.split("/")[file.name.split("/").length-2];
+					let dir = "./Uploaded/" + file.name.substring(0, file.name.lastIndexOf("/"));
+					console.log(dir);
 					if(!fs.existsSync(dir)){
 						fs.mkdirSync(dir);
-						console.log("ga ada");
 					}
 				    mv(oldpath, newpath, function (err) {
 				    	if (err) {
