@@ -7,7 +7,6 @@ var mv = require('mv');
 const hostname = '127.0.0.1';
 const port = 3000;
 
-const baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
 
 fs.readFile('index.html', (err, html) => {
 	if(err){
@@ -15,20 +14,25 @@ fs.readFile('index.html', (err, html) => {
 	}
 
 	const server = http.createServer((req, res) => {
+		let baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'text/html');
 		if (req.url == '/fileupload') {
 		    var form = formidable({ multiples: true });
-		    let allFiles = [];
-		    form.parse(req, function (err, fields, files) {
-    			console.log(files)
 
+		    //parsing input form
+		    form.parse(req, function (err, fields, files) {
+		    	let namaProject = "./Uploaded/" + fields.projectName + "/";
+		    	if(!fs.existsSync(namaProject)){
+					fs.mkdirSync(namaProject);
+					baseUploadPath = baseUploadPath + fields.projectName + "/"
+				}
+		    	//looping setiap file dalam directory
     			files.filetoupload.forEach(file => {
     				var oldpath = file.path;
 				    var newpath = baseUploadPath + file.name;
-					//let dir = "./Uploaded/" + file.name.split("/")[file.name.split("/").length-2];
-					let dir = "./Uploaded/" + file.name.substring(0, file.name.lastIndexOf("/"));
-					console.log(dir);
+					let dir = namaProject + file.name.substring(0, file.name.lastIndexOf("/"));
+					// console.log(dir);
 					if(!fs.existsSync(dir)){
 						fs.mkdirSync(dir);
 					}
