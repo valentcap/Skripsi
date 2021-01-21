@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 var formidable = require('formidable');
 var mv = require('mv');
-
+const javaMethodParser = require('java-method-parser');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -17,6 +17,7 @@ fs.readFile('index.html', (err, html) => {
 		let baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'text/html');
+
 		if (req.url == '/fileupload') {
 		    var form = formidable({ multiples: true });
 
@@ -57,8 +58,25 @@ fs.readFile('index.html', (err, html) => {
 			    //     res.end();
 			    // });
 		    });
-		}else{
+		}
+		else if(req.url == '/manual-parse'){
+			var form = formidable({ multiples: false });
+			form.parse(req, function (err, fields, files) {
+				fs.readFile(files.javafile.path, function (err, data) {
+					res.end(data);
+				});
+			});
+		}
+
+		else{
+			//page home normal
 			res.write(html);
+			let content = fs.readFileSync("./Java_Code/Magician.java");
+			
+			const output = javaMethodParser(content);
+			console.log(output);
+			fs.writeFileSync("./HasilParsing/Magician.json", output);
+
 			res.end();
 		}
 		

@@ -8,10 +8,13 @@
     "express": "^4.17.1",
     "formidable": "^1.2.2",
     "fs-extra": "^9.0.1",
+    "java-method-parser": "^0.4.8",
     "multer": "^1.4.2",
     "mv": "^2.1.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "java-parser": "^1.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
