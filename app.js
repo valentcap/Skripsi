@@ -71,10 +71,10 @@ fs.readFile('index.html', (err, html) => {
 		else{
 			//page home normal
 			res.write(html);
-			let content = fs.readFileSync("./Java_Code/Magician.java");
+			let content = fs.readFileSync("./Java_Code/Magician.java", "utf8");
 			
-			const output = javaMethodParser(content);
-			console.log(output);
+			let output = javaMethodParser(content);
+			output = JSON.stringify(output, null, 3);
 			fs.writeFileSync("./HasilParsing/Magician.json", output);
 
 			res.end();
