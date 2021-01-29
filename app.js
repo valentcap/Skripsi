@@ -14,7 +14,8 @@ fs.readFile('index.html', (err, html) => {
 	}
 
 	const server = http.createServer((req, res) => {
-		let baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
+		// let baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
+		let baseUploadPath = './Uploaded/';
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'text/html');
 
@@ -28,21 +29,74 @@ fs.readFile('index.html', (err, html) => {
 					fs.mkdirSync(namaProject);
 					baseUploadPath = baseUploadPath + fields.projectName + "/"
 				}
-		    	//looping setiap file dalam directory
-    			files.filetoupload.forEach(file => {
-    				var oldpath = file.path;
+				//cek file apakah ada banyak
+				if(files.filetoupload.length>1){
+			    	//looping setiap file dalam directory
+	    			files.filetoupload.forEach(file => {
+	    				var oldpath = file.path;
+					    var newpath = baseUploadPath + file.name;
+						let dir = namaProject + file.name.substring(0, file.name.lastIndexOf("/"));
+
+						//cek apakah file java atau bukan
+						if(file.name.substring(file.name.lastIndexOf("."), file.name.length) == ".java"){
+							
+
+							let content = fs.readFileSync(oldpath, "utf8");
+							let output = javaMethodParser(content);
+							//ubah hasil parsing menjadi string
+							output = JSON.stringify(output, null, 3);
+
+							if(!fs.existsSync(dir)){
+								fs.mkdirSync(dir);
+							}
+							//func baru, pre process lalu move
+							console.log(newpath);
+							fs.writeFileSync(newpath+".json", output);
+
+							//func lama, move upload
+						    // mv(oldpath, newpath, function (err) {
+						    // 	if (err) {
+						    // 		throw err;
+						    // 	}
+						    // });
+						}else{
+							console.log(file.name.substring(file.name.lastIndexOf("."), file.name.length));
+						}
+						
+	    			});
+	    		}else{
+	    			//hanya 1 file saja
+	    			let file = files.filetoupload;
+	    			var oldpath = file.path;
 				    var newpath = baseUploadPath + file.name;
 					let dir = namaProject + file.name.substring(0, file.name.lastIndexOf("/"));
-					// console.log(dir);
-					if(!fs.existsSync(dir)){
-						fs.mkdirSync(dir);
+
+					//cek apakah file java atau bukan
+					if(file.name.substring(file.name.lastIndexOf("."), file.name.length) == ".java"){
+						
+
+						let content = fs.readFileSync(oldpath, "utf8");
+						let output = javaMethodParser(content);
+						//ubah hasil parsing menjadi string
+						output = JSON.stringify(output, null, 3);
+
+						if(!fs.existsSync(dir)){
+							fs.mkdirSync(dir);
+						}
+						//func baru, pre process lalu move
+						console.log(newpath);
+						fs.writeFileSync(newpath+".json", output);
+
+						//func lama, move upload
+					    // mv(oldpath, newpath, function (err) {
+					    // 	if (err) {
+					    // 		throw err;
+					    // 	}
+					    // });
+					}else{
+						console.log(file.name.substring(file.name.lastIndexOf("."), file.name.length));
 					}
-				    mv(oldpath, newpath, function (err) {
-				    	if (err) {
-				    		throw err;
-				    	}
-				    });
-    			});
+	    		}
     			res.write('File uploaded and moved!');
 				res.write('<input type="button" value="Go back!" onclick="history.back()">');
     			res.end();
@@ -71,11 +125,12 @@ fs.readFile('index.html', (err, html) => {
 		else{
 			//page home normal
 			res.write(html);
-			let content = fs.readFileSync("./Java_Code/Magician.java", "utf8");
+			// let content = fs.readFileSync("./Java_Code/Magician.java", "utf8");
+			// let content = fs.readFileSync(path, "utf8");
 			
-			let output = javaMethodParser(content);
-			output = JSON.stringify(output, null, 3);
-			fs.writeFileSync("./HasilParsing/Magician.json", output);
+			// let output = javaMethodParser(content);
+			// output = JSON.stringify(output, null, 3);
+			// fs.writeFileSync("./HasilParsing/Magician.json", output);
 
 			res.end();
 		}
