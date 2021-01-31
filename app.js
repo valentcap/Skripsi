@@ -14,8 +14,8 @@ fs.readFile('index.html', (err, html) => {
 	}
 
 	const server = http.createServer((req, res) => {
-		// let baseUploadPath = 'D:/Kuliah/Program Skripsi/Uploaded/';
-		let baseUploadPath = './Uploaded/';
+		// let baseUploadPath = './Uploaded/';
+		let namaProject = "./Uploaded/";
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'text/html');
 
@@ -24,17 +24,17 @@ fs.readFile('index.html', (err, html) => {
 
 		    //parsing input form
 		    form.parse(req, function (err, fields, files) {
-		    	let namaProject = "./Uploaded/" + fields.projectName + "/";
+		    	namaProject = namaProject + fields.projectName + "/";
 		    	if(!fs.existsSync(namaProject)){
 					fs.mkdirSync(namaProject);
-					baseUploadPath = baseUploadPath + fields.projectName + "/"
+					// baseUploadPath = baseUploadPath + fields.projectName + "/";
 				}
 				//cek file apakah ada banyak
 				if(files.filetoupload.length>1){
 			    	//looping setiap file dalam directory
 	    			files.filetoupload.forEach(file => {
 	    				var oldpath = file.path;
-					    var newpath = baseUploadPath + file.name;
+					    var newpath = namaProject + file.name;
 						let dir = namaProject + file.name.substring(0, file.name.lastIndexOf("/"));
 
 						//cek apakah file java atau bukan
@@ -68,7 +68,7 @@ fs.readFile('index.html', (err, html) => {
 	    			//hanya 1 file saja
 	    			let file = files.filetoupload;
 	    			var oldpath = file.path;
-				    var newpath = baseUploadPath + file.name;
+				    var newpath = namaProject + file.name;
 					let dir = namaProject + file.name.substring(0, file.name.lastIndexOf("/"));
 
 					//cek apakah file java atau bukan
@@ -94,7 +94,7 @@ fs.readFile('index.html', (err, html) => {
 					    // 	}
 					    // });
 					}else{
-						console.log(file.name.substring(file.name.lastIndexOf("."), file.name.length));
+						// console.log(file.name.substring(file.name.lastIndexOf("."), file.name.length));
 					}
 	    		}
     			res.write('File uploaded and moved!');
